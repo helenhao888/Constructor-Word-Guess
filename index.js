@@ -16,8 +16,9 @@ var guessWord;
          name:"letter",
          message:"Guess a letter!",
          validate: function(value){
+             //only letter a-z, A-Z and space are allowed to input. Only input one character
              var pass = value.match(
-                 /^[a-zA-Z]{1,1}$/
+                /^[a-zA-Z\s]{1,1}$/
              );
              if(pass){
                  return true;
@@ -39,8 +40,7 @@ var guessWord;
  
  function newGame(){
 
-    gameRound.round++;
-    gameRound.remainingTimes=20;
+    
     guessWord = new word();
     guessWord.getRandWord();
     guessWord.displayWordFunc();
@@ -52,8 +52,6 @@ var guessWord;
 function inquirerProcess(){
     inquirer.prompt(words).then(answers=>{
        
-        console.log("answers",answers);
-        console.log("answers",answers.letter);
         checkLetter(answers.letter);
               
         }
@@ -61,44 +59,62 @@ function inquirerProcess(){
 }
  
 function checkLetter(letter){
-    console.log("check");
+   
    
     var checkFlg=guessWord.checkWord(letter);
 
     switch (checkFlg){
         case 0: 
-                console.log("INCORRECT!!!");
+                console.log(chalk.red("INCORRECT!!!"));
                 gameRound.remainingTimes--;
                 if(gameRound.remainingTimes>=1){
                    console.log(gameRound.remainingTimes+" guesses remaining")
                    inquirerProcess();
                 }else{
-                   console.log("You fail for guessing this word! Guess another word!");
-                   gameRound.round++;
-                   if(gameRound.round<=maxRound){
-                      newGame();
-                   }else{
-                      console.log("You lose!!!!");
-                   }
+                   console.log("You fail for guessing this word! ");
+                   console.log(chalk.red("You lose!!!!"));     
+                   inquirerNextRound();             
                 }
                 
                 break;
         case 1:
                 guessWord.displayWordFunc();
-                console.log("CORRECT!!!");
+                console.log(chalk.green("CORRECT!!!"));
                 inquirerProcess();
                 break;
         case 2:
                 guessWord.displayWordFunc();                
-                console.log("You got the word !")
+                console.log(chalk.white.bgMagenta("You got the word !"));
                 gameRound.winTimes++;
-                console.log("You guessed "+ gameRound.winTimes+" times correctly");
-                if(gameRound.winTimes<=gameRound.round){
-                    console.log("Guess another word")
+                console.log(chalk.white.bgMagenta("You guessed "+ gameRound.winTimes+" times correctly"));
+                gameRound.round++;
+                if(gameRound.round<=maxRound){
+                    console.log(chalk.blue("Guess another word"));
                     newGame();
                 }else{
-                    console.log("You win!!!")
+                    console.log(chalk.bold.green("You win!!!"));
+                    inquirerNextRound();
                 }
                 break;
     }
+}
+
+function inquirerNextRound(){
+    
+    inquirer.prompt([
+        {
+            type:"prompt",
+            message:"Do you want to play another round?",
+            name:"playagain"
+        }
+    ]).then(function(answers){
+        
+        console.log("answers",answers.playagain);
+        if(answers.playagain.toLowerCase().charAt(0) === "y"){
+            initRound();
+        }else{
+            console.log(chalk.bgMagenta.white("Thanks for playing! See you next time!"));
+            process.exit();
+        }
+    })
 }

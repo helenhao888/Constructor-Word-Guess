@@ -1,3 +1,5 @@
+// * **Word.js**: Contains a constructor, Word that depends on the Letter constructor. This is used to create an object representing the current word the user is attempting to guess. 
+
 var Letter=require("./Letter.js");
 const randomConst = 82;
 // predefined word list
@@ -12,21 +14,21 @@ var wordLibrary = [ "respect","frighten","wicked","reward","wooden","swanky","po
 "sticky","vivacious","noisy","unaccountable","perfect","oafish","Victoria Lake","National Park"];
 var displayWord=[];
 var matchFlg=0;
-var matchCount=0;
+
 //0 represents not match; 1 represents letter matched, 2 represents word matched. 
 
 var Word=function(){
     this.letterArr=[]; //store current word for guess
     this.matchCount=0;
     this.getRandWord = function() {
-        var  rand = Math.floor(Math.random()* randomConst);
-        console.log("rand",rand);
-        console.log("word",wordLibrary[rand]);
+        var  rand = Math.floor(Math.random()* randomConst);        
+       
         for (var i=0; i< wordLibrary[rand].length;i++){
-            this.letterArr.push(new Letter(wordLibrary[rand][i]));
-        }
-        
-        // console.log("letterArr",this.letterArr);
+            
+             this.letterArr.push(new Letter(wordLibrary[rand][i],false));
+            
+        }  
+     
     };
 
     this.displayWordFunc=function(){
@@ -43,11 +45,9 @@ var Word=function(){
         matchFlg=0;
 
         for (var j=0;j<this.letterArr.length;j++){
-            // console.log("name",this.letterArr[j].underlyChar);
-            // console.log("char",char);
-            // console.log("flag",this.letterArr[j].guessFlg);
-            if(this.letterArr[j].underlyChar === char && this.letterArr[j].guessFlg === false){
-                // console.log("found letter");
+            
+            if(this.letterArr[j].underlyChar.toLowerCase() === char.toLowerCase() && this.letterArr[j].guessFlg === false){
+              
                 this.letterArr[j].checkFunc(char);
                 this.matchCount++;
                 if(this.matchCount === this.letterArr.length){
@@ -67,7 +67,6 @@ var Word=function(){
     }
     
 }
-// * **Word.js**: Contains a constructor, Word that depends on the Letter constructor. This is used to create an object representing the current word the user is attempting to guess. That means the constructor should define:
 
 //   * An array of `new` Letter objects representing the letters of the underlying word
 
